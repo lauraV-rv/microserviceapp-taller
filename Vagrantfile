@@ -34,9 +34,7 @@ Vagrant.configure("2") do |config|
     front.vm.box = "bento/ubuntu-24.04"
     front.vm.hostname = "frontend"
 
-    # Red privada entre VMs
     front.vm.network "private_network", ip: "192.168.56.11"
-
     front.vm.network "forwarded_port", guest: 8080, host: 8081
 
     front.vm.provider "virtualbox" do |vb|
@@ -77,8 +75,6 @@ Vagrant.configure("2") do |config|
     a.vm.hostname = "auth"
 
     a.vm.network "private_network", ip: "192.168.56.12"
-
-    # Puerto para probar desde Windows (host 8002 -> guest 8000)
     a.vm.network "forwarded_port", guest: 8000, host: 8002
 
     a.vm.provider "virtualbox" do |vb|
@@ -120,10 +116,7 @@ Vagrant.configure("2") do |config|
     u.vm.box = "bento/ubuntu-24.04"
     u.vm.hostname = "users"
 
-    # Red privada
     u.vm.network "private_network", ip: "192.168.56.13"
-
-    # Puerto para probar desde Windows (host 8083 -> guest 8083)
     u.vm.network "forwarded_port", guest: 8083, host: 8083
 
     u.vm.provider "virtualbox" do |vb|
@@ -165,10 +158,7 @@ Vagrant.configure("2") do |config|
     r.vm.box = "bento/ubuntu-24.04"
     r.vm.hostname = "redis"
 
-    # Red privada
     r.vm.network "private_network", ip: "192.168.56.16"
-
-    # Opcional: exponer Redis a Windows para pruebas
     r.vm.network "forwarded_port", guest: 6379, host: 6379
 
     r.vm.provider "virtualbox" do |vb|
@@ -204,10 +194,7 @@ Vagrant.configure("2") do |config|
     t.vm.box = "bento/ubuntu-24.04"
     t.vm.hostname = "todos"
 
-    # Red privada
     t.vm.network "private_network", ip: "192.168.56.14"
-
-    # Para probar desde Windows
     t.vm.network "forwarded_port", guest: 8082, host: 8084
 
     t.vm.provider "virtualbox" do |vb|
@@ -250,7 +237,6 @@ Vagrant.configure("2") do |config|
     p.vm.box = "bento/ubuntu-24.04"
     p.vm.hostname = "processor"
 
-    # Red privada
     p.vm.network "private_network", ip: "192.168.56.15"
 
     p.vm.provider "virtualbox" do |vb|
@@ -293,10 +279,7 @@ Vagrant.configure("2") do |config|
     t.vm.box = "bento/ubuntu-24.04"
     t.vm.hostname = "todos2"
 
-    # Red privada
     t.vm.network "private_network", ip: "192.168.56.17"
-
-    # Puerto para probar desde Windows
     t.vm.network "forwarded_port", guest: 8082, host: 8085
 
     t.vm.provider "virtualbox" do |vb|
@@ -330,6 +313,40 @@ Vagrant.configure("2") do |config|
     SHELL
   end
 
-  
+  # =========================
+  # VM 8: Zipkin (Tracing)
+  # =========================
+  config.vm.define "zipkin" do |z|
+    z.vm.box = "bento/ubuntu-24.04"
+    z.vm.hostname = "zipkin"
+
+    z.vm.network "private_network", ip: "192.168.56.18"
+    z.vm.network "forwarded_port", guest: 9411, host: 9411
+
+    z.vm.provider "virtualbox" do |vb|
+      vb.name = "zipkin"
+      vb.memory = "512"
+      vb.cpus = 1
+    end
+
+    z.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get install -y ca-certificates curl git
+
+      install -m 0755 -d /etc/apt/keyrings
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+      chmod a+r /etc/apt/keyrings/docker.asc
+
+      echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list
+
+      apt-get update
+      apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+      systemctl enable docker
+      systemctl start docker
+      usermod -aG docker vagrant
+    SHELL
+  end
+
 
 end
