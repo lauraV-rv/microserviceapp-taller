@@ -1,7 +1,8 @@
-<<<<<<< HEAD
+
 Laura Valentina Revelo Villarreal 
 A00400031
-=======
+---
+
 # Taller: Despliegue de Microservicios con Vagrant + Docker
 
 Este taller consiste en desplegar una aplicación de microservicios (basada en el repositorio `microservice-app-example`) usando Vagrant para aprovisionar la infraestructura (múltiples VMs) y Docker para ejecutar cada componente en contenedores.  
@@ -39,7 +40,8 @@ El despliegue final se ejecutó construyendo imágenes y levantando contenedores
 ## Diseño de la arquitectura 
 
 
-![Arquitectura](./imagenes/arquitectura.png)
+<img width="783" height="563" alt="Arquitectura microservices" src="https://github.com/user-attachments/assets/de2b4b7c-f216-42fe-a519-19e62e466e53" />
+
 
 ---
 
@@ -90,5 +92,3 @@ A continuación se muestra un ejemplo de salida del contenedor mostrando eventos
 
 \
 <img width="1902" height="237" alt="captura logs processor" src="https://github.com/user-attachments/assets/259a5267-5716-4513-929c-bffda46198b0" />
-
->>>>>>> origin/main
